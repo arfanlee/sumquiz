@@ -1,5 +1,5 @@
 import streamlit as st
-from method_classes import sumquiz as sq
+from method_class import sumquiz as sq
 
 st.title("Welcome to SumMemory App!")
 
