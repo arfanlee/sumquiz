@@ -1,4 +1,5 @@
 import streamlit as st
+from method_classes import sumquiz as sq
 
 st.title("Welcome to SumMemory App!")
 
@@ -11,7 +12,7 @@ st.write(about)
 
 st.header("How to use")
 
-how_use = """
+instruction = """
 
     - Select which function do you want to use in the sidebar.
     - Upload a pdf, docx, or txt file📄 (Currently we don't support scanned PDF)
@@ -21,32 +22,12 @@ how_use = """
       for you to answer.
 """
 
-st.markdown(how_use)
+st.markdown(instruction)
 
 selected = st.selectbox("Pick one", ["Summary", "Quiz"], index=None, placeholder="Select a function...")
 
 if selected == "Summary":
-    st.title("Summary")
-
-    file = st.file_uploader("Upload a .pdf, .docx or .txt file.")
-
-    st.write("""Lorem ipsum dolor sit amet, libero """)
-
-    st.text_area("Query", placeholder="E.g. Explain further like I'm 5")
-
-    st.button("Submit")
+    sq.summation_show()
 
 elif selected == "Quiz":
-    st.title("Quiz")
-    file = st.file_uploader(
-    "Upload a .pdf, .docx or .txt file.",
-    type=["pdf", "docx", "txt"],
-    help="Scanned documents are not supported yet!")
-
-    words = """Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna?"""
-
-    st.write(words)
-
-    st.text_input("Answer")
-
-    st.button("Submit")
+    sq.quiz_show()
