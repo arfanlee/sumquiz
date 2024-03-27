@@ -51,7 +51,6 @@ def main():
 				query_answered = sq.summation_ask(client, query, parsed)
 				st.header("Answer")
 				st.write(query_answered)
-				st.stop()
 
 
 if __name__ == "__main__":
