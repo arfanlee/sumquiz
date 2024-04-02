@@ -1,57 +1,72 @@
 import streamlit as st
-from method_class import sumquiz as sq
+from method_class import DoChat as dc
 from openai import OpenAI
 
 client = OpenAI(
-    api_key=st.secrets["OPENAI_API_KEY"]
+	api_key=st.secrets["OPENAI_API_KEY"]
 )
 
 def main():
-	st.set_page_config(page_title="SumGPT", page_icon="📖", layout="wide")
-	st.header("📖 SumGPT App")
-	# st.title("Welcome to SumMemory App!")
+	st.set_page_config(page_title="AskDoc", page_icon="�")
+	st.header("� AskDoc")
 
-	st.divider()
+	st.write("""
+		Tired of sifting through documents? AskDoc is your friendly AI assistant that helps you chat with your files!
+		Ask questions, get key insights and summaries, and explore the content of your documents in a whole new way.""")
 
-	col1, col2 = st.columns(2, gap="large")
-	with col1:
-		st.header("About")
-		about = "SumGPT allows you it to summarize a file (pdf only) and ask it anything about the document."
+	uploaded_file = st.file_uploader(
+		"Choose a file",
+		type=["pdf"],
+		help="Scanned documents are not supported yet!")
 
-		st.write(about)
+	if not uploaded_file:
+		st.stop()
 
-		st.header("How to use")
-
-		instruction = """
-
-			2. Upload a pdf file📄 (Currently we don't support scanned PDF)
-			3. For summary, you can prompt for other query, for example, you can ask the SumGPT 
-			to explain a certain topic like you're a 5 years old.
-		"""
-
-		st.markdown(instruction)
-
-	with col2:
-		uploaded_file = sq.file_exporter()
-		if not uploaded_file:
-			st.stop()
-
+	else:
+		if uploaded_file.name.endswith(".pdf"):
+			parsed_file = dc.parse_pdf(uploaded_file)
 		else:
-			if uploaded_file is not None:
-				if uploaded_file.name.endswith(".pdf"):
-					parsed = sq.parse_pdf(uploaded_file)
-				else:
-					raise ValueError("File type not supported!")
+			raise ValueError("File type not supported!")
 
-			response = sq.summation(client, parsed)
-			st.write(response)
-			query = st.text_input("Query", placeholder="E.g. Explain further like I'm 5")
+		if "messages" not in st.session_state:
+			st.session_state.messages = [
+			{
+				"role":"assistant",
+				"content":"How can I help you?"
+			}
+		]
+		
+		# Display chat messages from history on app rerun
+		for message in st.session_state.messages:
+			with st.chat_message(message["role"]):
+				st.markdown(message["content"])
+		
+		# Accept user input
+		query = st.chat_input("Ask me anything about the document.")
 
-			if st.button("Submit"):
-				query_answered = sq.summation_ask(client, query, parsed)
-				st.header("Answer")
-				st.write(query_answered)
+		if query:
+		# Append new messages to history
+		# Displaying the User Message
+			with st.chat_message("user"):
+				st.markdown(query)
 
+			response = dc.chat_doc(client, query, parsed_file)
+			with st.chat_message("ai"):
+				st.markdown(response)
+
+			st.session_state.messages.append(
+				{
+					"role": "user",
+					"content": query
+				}
+			)
+
+			st.session_state.messages.append(
+				{
+					"role": "assistant",
+					"content": response
+				}
+			)
 
 if __name__ == "__main__":
     main()
