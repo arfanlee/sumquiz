@@ -7,8 +7,8 @@ client = OpenAI(
 )
 
 def main():
-	st.set_page_config(page_title="AskDoc", page_icon="�")
-	st.header("� AskDoc")
+	st.set_page_config(page_title="AskDoc", page_icon="💬")
+	st.header("💬 AskDoc")
 
 	st.write("""
 		Tired of sifting through documents? AskDoc is your friendly AI assistant that helps you chat with your files!
